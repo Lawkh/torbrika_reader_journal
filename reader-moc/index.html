@@ -1,0 +1,730 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Torbrika Tabs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    @font-face {
+      font-family: 'Quicksand';
+      src: url('./fonts/Quicksand-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Quicksand';
+      src: url('./fonts/Quicksand-SemiBold.ttf') format('truetype');
+      font-weight: 600;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Poppins';
+      src: url('./fonts/Poppins-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Poppins';
+      src: url('./fonts/Poppins-SemiBold.ttf') format('truetype');
+      font-weight: 600;
+      font-style: normal;
+    }
+    :root {
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      color: #1f2430;
+      background: #f7f5f2;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f4f5f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .canvas {
+      width: min(400px, 92vw);
+      height: min(560px, 90vh);
+      border-radius: 28px;
+      background: #fff;
+      box-shadow: 0 18px 42px rgba(16, 28, 52, 0.16);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    header h1 {
+      font-family: "Poppins", "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: 0.18em;
+      color: #41485a;
+    }
+    header span {
+      font-size: 0.85rem;
+      color: #8d92a0;
+    }
+    .pane {
+      flex: 1;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+    .pane[hidden] {
+      display: none;
+    }
+    .pane h2 {
+      font-family: "Poppins", "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      color: #6a6f7f;
+    }
+    .review-card {
+      width: 100%;
+      border: 1px solid #ececf1;
+      border-radius: 18px;
+      background: #fff;
+      display: flex;
+      cursor: pointer;
+      text-align: left;
+      overflow: hidden;
+      margin-bottom: 12px;
+      min-height: 68px;
+    }
+    .review-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px 18px;
+    }
+    .review-card strong {
+      font-size: 1rem;
+      color: #2e3240;
+    }
+    .review-date {
+      font-size: 0.85rem;
+      color: #7c8293;
+    }
+    .rating-badge {
+      font-size: 0.95rem;
+      font-weight: 700;
+      width: 20%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0 18px 18px 0;
+    }
+    .rating-1 { background: #ffbfbf; color: #8c1c1c; }
+    .rating-2 { background: #ffc88a; color: #833800; }
+    .rating-3 { background: #ffeaa0; color: #855c00; }
+    .rating-4 { background: #c6f0d5; color: #165c35; }
+    .rating-5 { background: #c3f4ff; color: #006982; }
+    .about-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      padding: 16px;
+      border-radius: 18px;
+      background-image:
+        linear-gradient(rgba(248,229,195,0.92), rgba(248,229,195,0.92)),
+        url('./assets/logo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center 10px;
+    }
+    .about-actions {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .about-cta {
+      border: 1px solid #ececf1;
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #f9fbff;
+    }
+    .about-cta button {
+      border: none;
+      border-radius: 12px;
+      padding: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #d4eafe;
+      color: #1e4b70;
+    }
+    .about-cta:nth-child(2) button {
+      background: #c6f5cf;
+      color: #1f5a37;
+    }
+    .about-cta small {
+      font-size: 0.85rem;
+      color: #6a6f7f;
+    }
+    .pane-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .icon-button {
+      border: none;
+      background: #9ecdf4;
+      color: #134160;
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .back-icon {
+      background: #f1f1f5;
+      color: #4b4f60;
+    }
+    .save-icon {
+      background: #c6f5cf;
+      color: #1f5a37;
+    }
+    .add-icon {
+      background: #d4eafe;
+      color: #1b4f7a;
+    }
+    .empty-copy {
+      font-size: 0.95rem;
+      color: #8d92a0;
+      margin: 0;
+    }
+    .intro-copy {
+      font-size: 0.95rem;
+      color: #5b6171;
+      line-height: 1.5;
+    }
+    .bottombar {
+      display: flex;
+      border-top: 1px solid #ececf1;
+      background: #f8f8fb;
+    }
+    .bottombar button {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 14px 0;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #7c8293;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .bottombar button[data-type="objetivos"] { color: #c77ba1; }
+    .bottombar button[data-type="reviews"] { color: #6ba0d1; }
+    .bottombar button[data-type="deseados"] { color: #5fb394; }
+    .bottombar button[data-active="true"] {
+      background: #cfd4de;
+      color: #1f2430;
+      font-weight: 700;
+    }
+    form.review-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    form.review-form label {
+      font-size: 0.82rem;
+      color: #7c8293;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    form.review-form input,
+    form.review-form textarea,
+    form.review-form select {
+      border-radius: 10px;
+      border: 1px solid #dfe3ea;
+      padding: 8px 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #1f2430;
+    }
+    form.review-form textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+  </style>
+</head>
+<body>
+  <main class="canvas">
+    <header>
+      <div class="brand" data-brand>
+        <h1>TORBRIKA</h1>
+        <span>Tu diario de lectura</span>
+      </div>
+      <div class="pane-head" data-global-actions hidden>
+        <button class="icon-button back-icon" type="button" data-global-back>←</button>
+        <button class="icon-button save-icon" type="button" data-global-save>✓</button>
+        <button class="icon-button add-icon" type="button" data-global-add hidden>+</button>
+      </div>
+    </header>
+    <section class="pane" id="contentPane"></section>
+    <nav class="bottombar" id="mainButtons">
+      <button data-type="objetivos" data-active="true">Objetivos</button>
+      <button data-type="reviews">Reseñas</button>
+      <button data-type="deseados">Deseados</button>
+      <button data-type="about">Acerca</button>
+    </nav>
+  </main>
+
+  <template id="tplObjetivos">
+    <h2>Objetivos</h2>
+    <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+      <p class="intro-copy" style="text-align:center;">Secciones proximamente disponibles!</p>
+    </div>
+  </template>
+
+  <template id="tplReviews">
+    <div class="pane-head">
+      <h2>Reseñas</h2>
+    </div>
+    <div data-reviews-list>
+      <p class="empty-copy">Cargando detalles...</p>
+    </div>
+  </template>
+
+  <template id="tplDeseados">
+    <h2>Deseados</h2>
+    <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+      <p class="intro-copy" style="text-align:center;">Secciones proximamente disponibles!</p>
+    </div>
+  </template>
+
+  <template id="tplAbout">
+    <section class="about-pane">
+      <div class="intro-copy" style="margin:0; max-width:280px;">
+        <p style="margin:0;">Torbrika es tu diario pastel para fijar objetivos de lectura en Kobo.</p>
+        <p style="margin:0;">Guarda reseñas con notas codificadas por color y recuerdos rápidos.</p>
+        <p style="margin:0;">Exporta o importa tus datos para mantener el progreso en cualquier dispositivo.</p>
+      </div>
+      <div class="about-actions">
+        <div class="about-cta">
+          <button type="button" data-backup="load">Cargar backup</button>
+          <small>Importa un archivo .json para restaurar objetivos, reviews y deseados.</small>
+        </div>
+        <div class="about-cta">
+          <button type="button" data-backup="save">Generar backup</button>
+          <small>Descarga un .json con tus notas actuales para guardarlo donde prefieras.</small>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <template id="tplReviewDetail">
+    <form id="reviewForm" class="review-form" data-review-form>
+      <label>
+        Titulo
+        <input name="titulo" required />
+      </label>
+      <label>
+        Autor
+        <input name="autor" />
+      </label>
+      <label>
+        Nota
+        <select name="nota">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </label>
+      <label>
+        Inicio de lectura
+        <input type="date" name="fecha_inicio_lectura" />
+      </label>
+      <label>
+        Fin de lectura
+        <input type="date" name="fecha_fin_lectura" />
+      </label>
+      <label>
+        Recomendado por
+        <input name="recomendado_por" />
+      </label>
+      <label>
+        Apuntes
+        <textarea name="apuntes"></textarea>
+      </label>
+    </form>
+  </template>
+
+  <script>
+    const templates = {
+      objetivos: document.getElementById("tplObjetivos"),
+      reviews: document.getElementById("tplReviews"),
+      deseados: document.getElementById("tplDeseados"),
+      about: document.getElementById("tplAbout"),
+      reviewDetail: document.getElementById("tplReviewDetail")
+    };
+    const buttons = document.querySelectorAll("#mainButtons button");
+    const contentPane = document.getElementById("contentPane");
+    const globalActions = document.querySelector("[data-global-actions]");
+    const globalBackBtn = document.querySelector("[data-global-back]");
+    const globalSaveBtn = document.querySelector("[data-global-save]");
+    const globalAddBtn = document.querySelector("[data-global-add]");
+    let onGlobalBack = null;
+    let onGlobalSave = null;
+    let onGlobalAdd = null;
+
+    globalBackBtn.addEventListener("click", () => {
+      if (onGlobalBack) {
+        onGlobalBack();
+      }
+    });
+    globalSaveBtn.addEventListener("click", () => {
+      if (onGlobalSave) {
+        onGlobalSave();
+      }
+    });
+    globalAddBtn.addEventListener("click", () => {
+      if (onGlobalAdd) {
+        onGlobalAdd();
+      }
+    });
+
+    function configureGlobalActions(options = {}) {
+      const {
+        showBack = false,
+        showSave = false,
+        showAdd = false,
+        onBack = null,
+        onSave = null,
+        onAdd = null
+      } = options;
+      onGlobalBack = onBack;
+      onGlobalSave = onSave;
+      onGlobalAdd = onAdd;
+      globalBackBtn.style.visibility = showBack ? "visible" : "hidden";
+      globalSaveBtn.style.visibility = showSave ? "visible" : "hidden";
+      globalAddBtn.style.display = showAdd ? "inline-flex" : "none";
+      globalActions.hidden = !(showBack || showSave || showAdd);
+    }
+
+    const DB_NAME = "torbrikaReviews";
+    const STORE = "reviews";
+    const SAMPLE_DATA = [
+      {
+        titulo: "Luces de Kobo",
+        autor: "Marina A.",
+        nota: "4",
+        fecha_inicio_lectura: "2024-05-01",
+        fecha_fin_lectura: "2024-05-06",
+        recomendado_por: "Lucia",
+        apuntes: "Gran paleta pastel, ideal para tests en el Libra Colour."
+      },
+      {
+        titulo: "Cuaderno de Brisa",
+        autor: "Diego T.",
+        nota: "3",
+        fecha_inicio_lectura: "2024-04-18",
+        fecha_fin_lectura: "2024-04-23",
+        recomendado_por: "Club Kobo BCN",
+        apuntes: "Buenos contrastes, aunque el PDF pesa demasiado."
+      }
+    ];
+
+    let db;
+    let reviewsList = null;
+    let currentSection = null;
+
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+
+        request.onupgradeneeded = (event) => {
+          const database = event.target.result;
+          const store = database.createObjectStore(STORE, {
+            keyPath: "id",
+            autoIncrement: true
+          });
+          SAMPLE_DATA.forEach((entry) => store.add(entry));
+        };
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function ensureDB() {
+      if (db) {
+        return Promise.resolve(db);
+      }
+      return initDB().then((instance) => {
+        db = instance;
+        return db;
+      });
+    }
+
+    function fetchReviews() {
+      return ensureDB().then(() => new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE, "readonly");
+        const store = tx.objectStore(STORE);
+        const all = store.getAll();
+        all.onsuccess = () => resolve(all.result);
+        all.onerror = () => reject(all.error);
+      }));
+    }
+
+    function fetchReviewById(id) {
+      return ensureDB().then(() => new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE, "readonly");
+        const store = tx.objectStore(STORE);
+        const req = store.get(id);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      }));
+    }
+
+    function updateReview(record) {
+      return ensureDB().then(() => new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE, "readwrite");
+        const store = tx.objectStore(STORE);
+        const req = store.put(record);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      }));
+    }
+
+    function createReview(record) {
+      return ensureDB().then(() => new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE, "readwrite");
+        const store = tx.objectStore(STORE);
+        const req = store.add(record);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      }));
+    }
+
+    function parseRating(nota) {
+      if (typeof nota === "number") {
+        return nota;
+      }
+      if (typeof nota === "string") {
+        const match = nota.match(/(\d+(\.\d+)?)/);
+        if (match) {
+          return parseFloat(match[1]);
+        }
+      }
+      return null;
+    }
+
+    function ratingLevel(nota) {
+      const score = parseRating(nota);
+      if (!score) return 3;
+      return Math.min(5, Math.max(1, Math.round(score)));
+    }
+
+    function renderReviewList(records) {
+      if (!reviewsList) {
+        return;
+      }
+      if (!records.length) {
+        reviewsList.innerHTML = '<p class="empty-copy">Sin registros por ahora.</p>';
+        return;
+      }
+      reviewsList.innerHTML = "";
+      records.forEach((record) => {
+        const card = document.createElement("div");
+        card.className = "review-card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        const level = ratingLevel(record.nota);
+        card.innerHTML = `
+          <div class="review-info">
+            <strong>${record.titulo}</strong>
+            <span class="review-date">${record.fecha_fin_lectura || "Sin fecha"}</span>
+          </div>
+          <span class="rating-badge rating-${level}">${record.nota}</span>
+        `;
+        card.addEventListener("click", () => openReviewDetailById(record.id));
+        card.addEventListener("keypress", (evt) => {
+          if (evt.key === "Enter" || evt.key === " ") {
+            evt.preventDefault();
+            openReviewDetailById(record.id);
+          }
+        });
+        reviewsList.appendChild(card);
+      });
+    }
+
+    function renderReviewsPane() {
+      reviewsList = contentPane.querySelector("[data-reviews-list]");
+      if (!reviewsList) {
+        return;
+      }
+      reviewsList.innerHTML = '<p class="empty-copy">Cargando detalles...</p>';
+      fetchReviews()
+        .then((records) => renderReviewList(records))
+        .catch(() => {
+          reviewsList.innerHTML = '<p class="empty-copy">No pudimos leer la base de datos.</p>';
+        });
+    }
+
+    function setupAboutPane(container) {
+      const loadBtn = container.querySelector('[data-backup="load"]');
+      const saveBtn = container.querySelector('[data-backup="save"]');
+      if (loadBtn) {
+        loadBtn.addEventListener("click", () => alert("Pronto podrás cargar un backup desde aquí."));
+      }
+      if (saveBtn) {
+        saveBtn.addEventListener("click", () => alert("Generaremos un backup descargable en una próxima versión."));
+      }
+    }
+
+    function renderPane(type) {
+      currentSection = type;
+      const template = templates[type];
+      contentPane.innerHTML = "";
+
+      if (!template) {
+        contentPane.innerHTML = '<p class="empty-copy">Seccion no disponible.</p>';
+        return;
+      }
+
+      const fragment = template.content.cloneNode(true);
+      contentPane.appendChild(fragment);
+      configureGlobalActions({
+        showBack: false,
+        showSave: false,
+        showAdd: type === "reviews",
+        onAdd: type === "reviews" ? () => renderReviewDetail() : null
+      });
+      const brand = document.querySelector("[data-brand]");
+      if (brand) {
+        brand.style.display = type === "about" ? "none" : "flex";
+      }
+
+      reviewsList = null;
+
+      if (type === "reviews") {
+        renderReviewsPane();
+      } else if (type === "about") {
+        setupAboutPane(contentPane);
+      }
+    }
+
+    function openReviewDetailById(id) {
+      fetchReviewById(id).then((record) => {
+        if (record) {
+          renderReviewDetail(record);
+        }
+      });
+    }
+
+    function renderReviewDetail(record = null) {
+      currentSection = "reviewDetail";
+      const template = templates.reviewDetail;
+      contentPane.innerHTML = "";
+      const fragment = template.content.cloneNode(true);
+      contentPane.appendChild(fragment);
+      const form = contentPane.querySelector("[data-review-form]");
+      if (!form) {
+        return;
+      }
+      const isNew = !record || !record.id;
+      form.elements.titulo.value = record?.titulo || "";
+      form.elements.autor.value = record?.autor || "";
+      form.elements.nota.value = String(parseRating(record?.nota) || 3);
+      form.elements.fecha_inicio_lectura.value = record?.fecha_inicio_lectura || "";
+      form.elements.fecha_fin_lectura.value = record?.fecha_fin_lectura || "";
+      form.elements.recomendado_por.value = record?.recomendado_por || "";
+      form.elements.apuntes.value = record?.apuntes || "";
+
+      const submitHandler = (event) => {
+        event.preventDefault();
+        const titulo = form.elements.titulo.value.trim();
+        if (!titulo) {
+          alert("Necesitas un titulo para guardar.");
+          return;
+        }
+        const finalNota = String(Math.min(5, Math.max(1, Math.round(parseRating(form.elements.nota.value) || 1))));
+        const payload = {
+          ...record,
+          titulo,
+          autor: form.elements.autor.value.trim(),
+          nota: finalNota,
+          fecha_inicio_lectura: form.elements.fecha_inicio_lectura.value,
+          fecha_fin_lectura: form.elements.fecha_fin_lectura.value,
+          recomendado_por: form.elements.recomendado_por.value.trim(),
+          apuntes: form.elements.apuntes.value.trim()
+        };
+        const action = isNew
+          ? createReview({
+              titulo: payload.titulo,
+              autor: payload.autor,
+              nota: finalNota,
+              fecha_inicio_lectura: payload.fecha_inicio_lectura,
+              fecha_fin_lectura: payload.fecha_fin_lectura,
+              recomendado_por: payload.recomendado_por,
+              apuntes: payload.apuntes
+            })
+          : updateReview(payload);
+        action.then(() => {
+          renderPane("reviews");
+        }).catch(() => {
+          alert("No se pudo guardar el review.");
+        });
+      };
+      form.addEventListener("submit", submitHandler);
+      configureGlobalActions({
+        showBack: true,
+        showSave: true,
+        showAdd: false,
+        onBack: () => renderPane("reviews"),
+        onSave: () => form.requestSubmit()
+      });
+    }
+
+    function setActive(type) {
+      buttons.forEach((btn) => {
+        if (btn.dataset.type === type) {
+          btn.setAttribute("data-active", "true");
+        } else {
+          btn.removeAttribute("data-active");
+        }
+      });
+      renderPane(type);
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => setActive(btn.dataset.type));
+    });
+
+    setActive("objetivos");
+  </script>
+</body>
+</html>
